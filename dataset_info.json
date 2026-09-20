@@ -1,0 +1,44 @@
+{
+  "name": "Microrobot Design Benchmark",
+  "version": "1.0.0",
+  "release_date": "2026-09-20",
+  "repository": "https://github.com/SII-YujunChen/microrobot-design-benchmark",
+  "language": "zh-CN",
+  "license": "CC-BY-4.0",
+  "question_count": 100,
+  "id_range": [
+    "Q201",
+    "Q300"
+  ],
+  "subsets": {
+    "basic_design": {
+      "id_range": [
+        "Q201",
+        "Q250"
+      ],
+      "count": 50
+    },
+    "scenario_design": {
+      "id_range": [
+        "Q251",
+        "Q300"
+      ],
+      "count": 50
+    }
+  },
+  "category_counts": {
+    "agriculture_soil": 4,
+    "collective_systems": 4,
+    "design_tool_interoperability": 3,
+    "environmental_monitoring": 13,
+    "gut_monitoring": 15,
+    "industrial_biomanufacturing": 13,
+    "infection_wound": 14,
+    "tissue_engineering": 8,
+    "tumor_microenvironment": 16,
+    "vascular_monitoring": 10
+  },
+  "question_text_policy": "Original question strings preserved byte-for-byte in UTF-8.",
+  "related_paper": "https://arxiv.org/abs/2608.19699v1",
+  "release_scope": "Question dataset with original evaluator metadata; no model responses or result reproduction bundle."
+}

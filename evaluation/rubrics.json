@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "rubrics": [
+    {
+      "id": "source-basic-10pt",
+      "subset": "basic_design",
+      "source_field": "rubric",
+      "maximum_score": 10,
+      "dimensions": {
+        "semantic_decomposition": 2,
+        "scenario_fit": 2,
+        "module_selection": 2,
+        "evidence_grounding": 2,
+        "limitations_and_safety": 2
+      }
+    },
+    {
+      "id": "source-scenario-10pt",
+      "subset": "scenario_design",
+      "source_field": "rubric_10pt",
+      "maximum_score": 10,
+      "dimensions": {
+        "evidence_grounding": 1.5,
+        "feasibility_evaluation": 1.5,
+        "module_decomposition": 2,
+        "safety_and_limitations": 1,
+        "scenario_fit": 2,
+        "task_understanding": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "Please cite this dataset release and the related paper."
+type: dataset
+title: "Microrobot Design Benchmark: Q201–Q300"
+version: "1.0.0"
+date-released: "2026-09-20"
+url: "https://github.com/SII-YujunChen/microrobot-design-benchmark"
+repository-code: "https://github.com/SII-YujunChen/microrobot-design-benchmark"
+license: CC-BY-4.0
+authors:
+  - family-names: Chen
+    given-names: Yujun
+references:
+  - type: article
+    title: "An Evidence-Grounded Multi-Agent System for High-Level Bio-Robot Design"
+    authors:
+      - family-names: Chen
+        given-names: Yujun
+      - family-names: Li
+        given-names: Tianle
+      - family-names: Chen
+        given-names: Jiayu
+      - family-names: Yin
+        given-names: Zhen
+    year: 2026
+    doi: "10.48550/arXiv.2608.19699"
+    url: "https://arxiv.org/abs/2608.19699v1"

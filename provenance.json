@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "sources": [
+    {
+      "filename": "queries_biorobot_design_schemes_20260603_Q201_Q250.jsonl",
+      "sha256": "f7bf78a505c4d51b0704dd24312f7e651fe7b23d1fbb99f9ba0ff52be3287ee0",
+      "record_count": 50
+    },
+    {
+      "filename": "queries_biorobot_scenario_design_Q251_Q300.jsonl",
+      "sha256": "4bebf7402b176fda62acabf8cbeff1ce638091ea95dcc9b6f4222f73315b8c3a",
+      "record_count": 50
+    }
+  ],
+  "cross_check": {
+    "source_package": "TCMES_Q201_Q300_REPORT_DATA_PACKAGE_20260814",
+    "file": "public_study_snapshot/shared/questions_only.jsonl",
+    "sha256": "50dee03aba26b1540eb1990f40220a2748df3b35465325180251005d28f715bc",
+    "matching_question_texts": 100,
+    "matching_question_hashes": 100
+  },
+  "transformations": [
+    "Preserve source IDs and query strings exactly.",
+    "Unify record fields and export CSV/JSONL.",
+    "Keep original category in source_category; add normalized category.",
+    "Retain Q201-Q250 titles; add editorial Chinese titles for Q251-Q300.",
+    "Move all original evaluator metadata to a separate reference file.",
+    "Preserve the two original 10-point rubrics separately."
+  ],
+  "label_note": "The source label_type=human_scored denotes the intended evaluation format, not evidence that a particular human scoring run was completed."
+}

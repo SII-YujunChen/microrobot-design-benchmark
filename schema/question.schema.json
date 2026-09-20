@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Microrobot Design Benchmark Question",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "index",
+    "subset",
+    "language",
+    "title",
+    "category",
+    "category_label_zh",
+    "source_category",
+    "task_type",
+    "question",
+    "question_sha256"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^Q(2[0-9]{2}|300)$"
+    },
+    "index": {
+      "type": "integer",
+      "minimum": 201,
+      "maximum": 300
+    },
+    "subset": {
+      "type": "string",
+      "enum": [
+        "basic_design",
+        "scenario_design"
+      ]
+    },
+    "language": {
+      "type": "string",
+      "const": "zh-CN"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "agriculture_soil",
+        "collective_systems",
+        "design_tool_interoperability",
+        "environmental_monitoring",
+        "gut_monitoring",
+        "industrial_biomanufacturing",
+        "infection_wound",
+        "tissue_engineering",
+        "tumor_microenvironment",
+        "vascular_monitoring"
+      ]
+    },
+    "category_label_zh": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}
