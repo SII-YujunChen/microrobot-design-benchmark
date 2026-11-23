@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "3.0.0",
   "sources": [
     {
       "subset": "component_retrieval",
@@ -72,16 +72,16 @@
       ]
     },
     {
-      "subset": "advanced_data_interpretation",
-      "filename": "data/advanced_data_interpretation.jsonl",
-      "sha256": "b6ecb00362bb343f07ee0e199ab82d495312e3416c60f17e983943704eb71b23",
+      "subset": "advanced_biorobot_design",
+      "filename": "data/advanced_biorobot_design.jsonl",
+      "sha256": "f8b5d968088219e5751acebb56b0b02a025f38b32582704308b1403948fb7a28",
       "record_count": 100,
       "id_range": [
         "Q701",
         "Q800"
       ],
       "source_language": "en",
-      "origin": "Original English benchmark cases authored for v2.1.0 using synthetic observations and study summaries. All measurements are fictional."
+      "origin": "Original English biological and biohybrid microrobot design briefs authored for v3.0.0. Component capabilities in the briefs are hypothetical design assumptions."
     }
   ],
   "cross_check": {
@@ -102,7 +102,7 @@
     "Group Q001–Q150 by source task type, Q151–Q200 by application scenario, Q201–Q300 by their v1.0.0 categories, and Q301–Q700 by the 40 source topics.",
     "Use English display labels and titles. Translate existing v1.0.0 titles for Q201–Q300. For added collections use the English topic label and ID as the display title.",
     "Keep evaluator metadata in a separate file. Translate source-language prose and retain machine identifiers, refusal flags, and the three original numeric rubrics.",
-    "For Q701–Q800 the English question is the original source. Store only the case and indexing information in data/. Store the four item-specific scoring anchors and acceptable alternatives separately in evaluation/."
+    "For Q701–Q800 the English design brief is the original source. Keep the four individual criteria and the example alternative design in evaluation/."
   ],
   "label_note": "The source label_type=human_scored denotes the intended evaluation format, not evidence that a particular human scoring run was completed.",
   "extended_cross_check": {
@@ -125,5 +125,6 @@
   "source_languages": [
     "zh-CN",
     "en"
-  ]
+  ],
+  "version_note": "In v3.0.0, Q701–Q800 are new design prompts with new hashes. Identically numbered data interpretation prompts from v2.1.0 belong to that earlier version."
 }

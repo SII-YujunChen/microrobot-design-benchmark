@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "3.0.0",
   "rubrics": [
     {
       "id": "source-basic-10pt",
@@ -47,8 +47,8 @@
       }
     },
     {
-      "id": "advanced-case-4pt",
-      "subset": "advanced_data_interpretation",
+      "id": "advanced-design-4pt",
+      "subset": "advanced_biorobot_design",
       "source_field": "rubric_4pt",
       "maximum_score": 4,
       "dimensions": {
@@ -57,7 +57,7 @@
         "criterion_3": 1,
         "criterion_4": 1
       },
-      "description": "Each point corresponds, in order, to one item-specific entry in grading_anchors."
+      "description": "Award one point for each of the four brief-specific design criteria. Accept alternative architectures that meet the same requirements."
     }
   ]
 }

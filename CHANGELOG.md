@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0 — 2026-11-23
+
+- Replaced the Q701–Q800 data interpretation cases from v2.1.0 with 100 original biological microrobot design briefs.
+- Organized the briefs into four design topics. Each has its own four-point scoring key and an example alternative architecture.
+- Q001–Q700 retain their earlier records. Scores or answers for Q701–Q800 from v2.1.0 apply only to that archived release. Cite the version and question hash when referring to these IDs.
+
 ## 2.1.0 — 2026-11-23
 
 - Added Q701–Q800, an English-language challenge collection with 100 self-contained synthetic data cases in four topic areas.

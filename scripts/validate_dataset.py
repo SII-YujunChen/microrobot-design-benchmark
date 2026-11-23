@@ -9,8 +9,8 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CHALLENGE = "advanced_data_interpretation"
-CHALLENGE_TOPICS = ("measurement_calibration", "tracking_time_series", "evidence_and_validity", "decision_and_benchmarking")
+CHALLENGE = "advanced_biorobot_design"
+CHALLENGE_TOPICS = ("biological_sensing_and_memory", "biohybrid_locomotion_and_manipulation", "collective_biorobot_design", "biorobot_system_integration")
 # Source numbering, category field, and numeric rubric for each collection.
 SUBSETS = {
     "component_retrieval": (1, 50, "task_type", None, None),
@@ -86,14 +86,15 @@ def check_browser(subset, rows, index_page):
 
 
 def check_challenge(rows, refs):
-    key = read_jsonl("evaluation/advanced_data_interpretation_key.jsonl")
+    key = read_jsonl("evaluation/advanced_biorobot_design_key.jsonl")
     require(key == refs, "Standalone challenge key differs from combined evaluator records")
     require(len({r["title"] for r in rows}) == len(rows), "Duplicate challenge title")
     for i, (row, ref) in enumerate(zip(rows, key)):
         ident = row["id"]
         meta = ref["source_metadata"]
         require(row["category"] == CHALLENGE_TOPICS[i // 25], f"{ident}: incorrect challenge topic")
-        require(meta["source_language"] == "en" and meta["evidence_origin"] == "synthetic",
+        require(meta["source_language"] == "en" and meta["scenario_origin"] == "hypothetical_design_brief"
+                and row["task_type"] == "design_biorobot_system",
                 f"{ident}: incorrect challenge provenance")
         anchors = meta["grading_anchors"]
         require(isinstance(anchors, list) and len(anchors) == 4
