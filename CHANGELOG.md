@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0 — 2026-11-23
+
+- Added Q701–Q800, an English-language challenge collection with 100 self-contained synthetic data cases in four topic areas.
+- Added a question-only download and an evaluator key with four case-specific scoring criteria and accepted alternatives for each item.
+- Extended the combined dataset and offline validator to 800 questions. Q001–Q700 retain their v2.0.0 records.
+
 ## 2.0.0 — 2026-11-23
 
 - Published 700 English questions in seven collections. This edition translates the original Chinese prompts and evaluator notes and preserves the source question IDs.

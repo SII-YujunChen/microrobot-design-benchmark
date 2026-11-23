@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "sources": [
     {
       "subset": "component_retrieval",
@@ -70,6 +70,18 @@
         "Q301",
         "Q700"
       ]
+    },
+    {
+      "subset": "advanced_data_interpretation",
+      "filename": "data/advanced_data_interpretation.jsonl",
+      "sha256": "b6ecb00362bb343f07ee0e199ab82d495312e3416c60f17e983943704eb71b23",
+      "record_count": 100,
+      "id_range": [
+        "Q701",
+        "Q800"
+      ],
+      "source_language": "en",
+      "origin": "Original English benchmark cases authored for v2.1.0 using synthetic observations and study summaries. All measurements are fictional."
     }
   ],
   "cross_check": {
@@ -85,11 +97,12 @@
     "text_language": "zh-CN"
   },
   "transformations": [
-    "Translate all 700 questions into English and retain each original question ID, technical identifier, requested deliverable, and task constraint.",
-    "Publish matching English CSV, JSONL, and browsing pages. question_sha256 identifies the released English prompt. source_prompt_sha256 and source_question_hashes.json identify the original Chinese prompt.",
+    "Translate Q001–Q700 into English and retain each original question ID, technical identifier, requested deliverable, and task constraint.",
+    "Publish matching English CSV, JSONL, and browsing pages. question_sha256 identifies the released English prompt. source_prompt_sha256 and source_question_hashes.json identify the source prompt (Chinese for Q001–Q700, English for Q701–Q800).",
     "Group Q001–Q150 by source task type, Q151–Q200 by application scenario, Q201–Q300 by their v1.0.0 categories, and Q301–Q700 by the 40 source topics.",
     "Use English display labels and titles. Translate existing v1.0.0 titles for Q201–Q300. For added collections use the English topic label and ID as the display title.",
-    "Keep evaluator metadata in a separate file. Translate source-language prose and retain machine identifiers, refusal flags, and the three original numeric rubrics."
+    "Keep evaluator metadata in a separate file. Translate source-language prose and retain machine identifiers, refusal flags, and the three original numeric rubrics.",
+    "For Q701–Q800 the English question is the original source. Store only the case and indexing information in data/. Store the four item-specific scoring anchors and acceptable alternatives separately in evaluation/."
   ],
   "label_note": "The source label_type=human_scored denotes the intended evaluation format, not evidence that a particular human scoring run was completed.",
   "extended_cross_check": {
@@ -107,6 +120,10 @@
     "matching_records": 400,
     "text_language": "zh-CN"
   },
-  "source_language": "zh-CN",
-  "release_language": "en"
+  "source_language": "mul",
+  "release_language": "en",
+  "source_languages": [
+    "zh-CN",
+    "en"
+  ]
 }

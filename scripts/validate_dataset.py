@@ -9,6 +9,8 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+CHALLENGE = "advanced_data_interpretation"
+CHALLENGE_TOPICS = ("measurement_calibration", "tracking_time_series", "evidence_and_validity", "decision_and_benchmarking")
 # Source numbering, category field, and numeric rubric for each collection.
 SUBSETS = {
     "component_retrieval": (1, 50, "task_type", None, None),
@@ -18,6 +20,7 @@ SUBSETS = {
     "basic_design": (201, 250, "scenario", "rubric", 10),
     "scenario_design": (251, 300, "category", "rubric_10pt", 10),
     "extended_scenario_design": (301, 700, "category", "rubric_20pt", 20),
+    CHALLENGE: (701, 800, "category", "rubric_4pt", 4),
 }
 
 
@@ -61,7 +64,7 @@ def check_reference(row, ref, category_key, rubric):
     meta = ref["source_metadata"]
     require(row["source_category"] == meta[category_key], f"{ident}: source category mismatch")
     require(row["task_type"] == meta["task_type"], f"{ident}: task type mismatch")
-    if category_key == "task_type" or row["subset"] == "extended_scenario_design":
+    if category_key == "task_type" or row["subset"] in {"extended_scenario_design", CHALLENGE}:
         require(row["category"] == row["source_category"], f"{ident}: category mismatch")
     if rubric is None:
         require(ref["rubric_id"] is None, f"{ident}: unexpected numeric rubric")
@@ -80,6 +83,26 @@ def check_browser(subset, rows, index_page):
     for row, body in zip(rows, sections[2::2]):
         paragraphs = body.strip("\n").split("\n\n")
         require(row["question"] in paragraphs, f"{row['id']}: incorrect browser prompt")
+
+
+def check_challenge(rows, refs):
+    key = read_jsonl("evaluation/advanced_data_interpretation_key.jsonl")
+    require(key == refs, "Standalone challenge key differs from combined evaluator records")
+    require(len({r["title"] for r in rows}) == len(rows), "Duplicate challenge title")
+    for i, (row, ref) in enumerate(zip(rows, key)):
+        ident = row["id"]
+        meta = ref["source_metadata"]
+        require(row["category"] == CHALLENGE_TOPICS[i // 25], f"{ident}: incorrect challenge topic")
+        require(meta["source_language"] == "en" and meta["evidence_origin"] == "synthetic",
+                f"{ident}: incorrect challenge provenance")
+        anchors = meta["grading_anchors"]
+        require(isinstance(anchors, list) and len(anchors) == 4
+                and all(isinstance(a, str) and a.strip() for a in anchors)
+                and len(set(anchors)) == 4, f"{ident}: four distinct scoring criteria required")
+        require(isinstance(meta["acceptable_alternative"], str) and meta["acceptable_alternative"].strip(),
+                f"{ident}: missing alternative scoring guidance")
+        require(meta["rubric_4pt"] == {f"criterion_{n}": 1 for n in range(1, 5)},
+                f"{ident}: challenge scoring weights differ")
 
 
 def check_checksums():
@@ -112,11 +135,11 @@ def main():
     rubric_by_subset = {r["subset"]: r for r in rubrics}
     expected_graded = {name for name, fields in SUBSETS.items() if fields[3] is not None}
     require(len(rubrics) == len(expected_graded) and set(rubric_by_subset) == expected_graded,
-            "Expected one numeric rubric for each of the three design subsets")
+            "Expected one numeric rubric for each scored subset")
     require(len({r["id"] for r in rubrics}) == len(rubrics), "Duplicate rubric IDs")
 
-    expected_ids = [f"Q{n:03d}" for n in range(1, 701)]
-    require([r["id"] for r in rows] == expected_ids, "Expected exactly Q001–Q700 in order")
+    expected_ids = [f"Q{n:03d}" for n in range(1, 801)]
+    require([r["id"] for r in rows] == expected_ids, "Expected exactly Q001–Q800 in order")
     require([r["id"] for r in refs] == expected_ids, "Evaluator metadata IDs do not match")
     require(len({r["question"] for r in rows}) == len(rows), "Duplicate question strings")
     require(info["language"] == "en", "Dataset language must be English")
@@ -147,6 +170,8 @@ def main():
             require(row["question_sha256"] == "sha256:" + digest, f"{ident}: question hash mismatch")
             check_reference(row, ref, category_key, rubric)
 
+    check_challenge(rows[700:], refs[700:])
+
     with (ROOT / "data/questions.csv").open(encoding="utf-8-sig", newline="") as stream:
         csv_rows = list(csv.DictReader(stream))
     for row in csv_rows:
@@ -155,8 +180,8 @@ def main():
     source_hashes = read_json("source_question_hashes.json")
     require(source_hashes == {r["id"]: r["source_prompt_sha256"] for r in rows}, "Original prompt hashes differ")
     for row in rows:
-        require(row["source_prompt_sha256"] != row["question_sha256"],
-                f"{row['id']}: source and English prompt hashes match")
+        same_hash = row["source_prompt_sha256"] == row["question_sha256"]
+        require(same_hash == (row["subset"] == CHALLENGE), f"{row['id']}: source language/hash mismatch")
     file_count = check_checksums()
     print(f"PASS: {len(rows)} unique English questions in {len(SUBSETS)} subsets, English and source prompt hashes, "
           f"rubrics, browser pages, CSV/JSONL agreement and {file_count} file checksums.")

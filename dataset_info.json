@@ -1,14 +1,14 @@
 {
   "name": "Microrobot Design Benchmark",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "release_date": "2026-11-23",
   "repository": "https://github.com/SII-YujunChen/microrobot-design-benchmark",
   "language": "en",
   "license": "CC-BY-4.0",
-  "question_count": 700,
+  "question_count": 800,
   "id_range": [
     "Q001",
-    "Q700"
+    "Q800"
   ],
   "subsets": {
     "component_retrieval": {
@@ -66,6 +66,14 @@
         "Q700"
       ],
       "count": 400
+    },
+    "advanced_data_interpretation": {
+      "name": "Advanced Data Interpretation Challenge",
+      "id_range": [
+        "Q701",
+        "Q800"
+      ],
+      "count": 100
     }
   },
   "category_counts": {
@@ -80,11 +88,13 @@
     "compatibility_evidence": 6,
     "conflicting_evidence": 8,
     "conflicting_infeasible": 10,
+    "decision_and_benchmarking": 25,
     "design_logic": 6,
     "design_review_quality": 5,
     "design_tool_interoperability": 3,
     "education_safe_demo": 10,
     "environmental_monitoring": 20,
+    "evidence_and_validity": 25,
     "evidence_attribution": 8,
     "evidence_conflict": 8,
     "evidence_gap_proxy": 10,
@@ -110,6 +120,7 @@
     "liver_pancreas_metabolic": 10,
     "low_evidence_abstention": 8,
     "marine_aquatic": 10,
+    "measurement_calibration": 25,
     "multi_hop_design": 10,
     "multi_module_design": 10,
     "multistrain_consortia": 10,
@@ -135,6 +146,7 @@
     "temporal_logic_memory": 10,
     "tissue_engineering": 14,
     "tissue_regeneration": 10,
+    "tracking_time_series": 25,
     "translation_validation": 10,
     "tumor_microenvironment": 22,
     "tumor_response_recurrence": 10,
@@ -148,8 +160,12 @@
     "wearable_ingestible_devices": 10,
     "yeast_metabolic": 6
   },
-  "question_text_policy": "English translations preserve source IDs. Each row includes independent SHA-256 digests of the English and source prompt strings.",
+  "question_text_policy": "Q001–Q700 are English translations. Q701–Q800 are English originals. Each row includes both released and source prompt hashes.",
   "related_paper": "https://arxiv.org/abs/2608.19699v1",
-  "release_scope": "English questions and evaluator references across seven collections.",
-  "source_language": "zh-CN"
+  "release_scope": "English prompts and separate evaluator references in eight collections.",
+  "source_language": "mul",
+  "source_languages": [
+    "zh-CN",
+    "en"
+  ]
 }

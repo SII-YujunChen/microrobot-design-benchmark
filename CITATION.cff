@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "Please cite this dataset release and the related paper."
 type: dataset
 title: "Microrobot Design Benchmark"
-version: "2.0.0"
+version: "2.1.0"
 date-released: "2026-11-23"
 url: "https://github.com/SII-YujunChen/microrobot-design-benchmark"
 repository-code: "https://github.com/SII-YujunChen/microrobot-design-benchmark"
