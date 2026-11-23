@@ -10,32 +10,38 @@
     "language",
     "title",
     "category",
-    "category_label_zh",
     "source_category",
     "task_type",
     "question",
-    "question_sha256"
+    "question_sha256",
+    "source_prompt_sha256",
+    "category_label_en"
   ],
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^Q(2[0-9]{2}|300)$"
+      "pattern": "^Q(00[1-9]|0[1-9][0-9]|[1-6][0-9]{2}|700)$"
     },
     "index": {
       "type": "integer",
-      "minimum": 201,
-      "maximum": 300
+      "minimum": 1,
+      "maximum": 700
     },
     "subset": {
       "type": "string",
       "enum": [
+        "component_retrieval",
+        "design_reasoning",
+        "evidence_stress_tests",
+        "applied_scenarios",
         "basic_design",
-        "scenario_design"
+        "scenario_design",
+        "extended_scenario_design"
       ]
     },
     "language": {
       "type": "string",
-      "const": "zh-CN"
+      "const": "en"
     },
     "title": {
       "type": "string",
@@ -44,21 +50,85 @@
     "category": {
       "type": "string",
       "enum": [
+        "adaptive_fault_tolerant",
         "agriculture_soil",
+        "autoimmune_inflammation",
+        "biosafety_regulatory",
+        "cardiovascular_blood",
+        "cello_tool_integration",
+        "closed_bioremediation",
         "collective_systems",
+        "compatibility_evidence",
+        "conflicting_evidence",
+        "conflicting_infeasible",
+        "design_logic",
+        "design_review_quality",
         "design_tool_interoperability",
+        "education_safe_demo",
         "environmental_monitoring",
+        "evidence_attribution",
+        "evidence_conflict",
+        "evidence_gap_proxy",
+        "ex_vivo_diagnostics",
+        "external_actuation",
+        "external_field_biohybrid",
+        "extreme_space",
+        "failure_or_safety_reasoning",
+        "food_safety_fermentation",
+        "gold_part_hit_at_1",
+        "gold_part_hit_at_3",
+        "gut_living_medicines",
+        "gut_microbiome_metabolism",
         "gut_monitoring",
+        "hard_negative_ranking",
+        "implants_medical_devices",
+        "in_vitro_diagnostics",
         "industrial_biomanufacturing",
+        "industrial_biomanufacturing_advanced",
+        "infection_biofilm",
         "infection_wound",
+        "integrated_decision",
+        "liver_pancreas_metabolic",
+        "low_evidence_abstention",
+        "marine_aquatic",
+        "multi_hop_design",
+        "multi_module_design",
+        "multistrain_consortia",
+        "neuro_brain_gut",
+        "oral_skin_mucosal",
+        "organoid_organ_chip",
+        "part_vs_design_card",
+        "personalized_heterogeneity",
+        "plant_endophyte",
+        "readout_imaging_communication",
+        "reproductive_maternal",
+        "respiratory_lung",
+        "retrieval_crispr",
+        "retrieval_input_qs",
+        "retrieval_memory",
+        "retrieval_output",
+        "safety_blocked",
+        "safety_boundary_allowed",
+        "safety_boundary_blocked",
+        "soil_agriculture",
+        "subtle_safety_boundary",
+        "swarm_collective",
+        "temporal_logic_memory",
         "tissue_engineering",
+        "tissue_regeneration",
+        "translation_validation",
         "tumor_microenvironment",
-        "vascular_monitoring"
+        "tumor_response_recurrence",
+        "tumor_spatial_metastasis",
+        "tumor_translation",
+        "urinary_renal",
+        "vascular_monitoring",
+        "veterinary_animal_health",
+        "vulnerable_populations",
+        "water_wastewater",
+        "wearable_ingestible_devices",
+        "yeast_metabolic"
       ]
-    },
-    "category_label_zh": {
-      "type": "string",
-      "minLength": 1
     },
     "source_category": {
       "type": "string",
@@ -73,6 +143,14 @@
       "minLength": 1
     },
     "question_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "category_label_en": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_prompt_sha256": {
       "type": "string",
       "pattern": "^sha256:[0-9a-f]{64}$"
     }

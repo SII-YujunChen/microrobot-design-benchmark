@@ -1,60 +1,37 @@
 # Microrobot Design Benchmark
 
-用于生物微机器人高层设计评测的 **100 道中文开放式测试题**，保留 Q201–Q300 原始题号与题干。包含基础设计 50 题、场景设计 50 题，覆盖需求拆解、模块必要性判断、感知与逻辑、记忆与输出、证据判断及可行性分析。
+This benchmark contains **700 English questions** about biological microrobot design. It tests whether a system can retrieve relevant evidence, judge what that evidence supports, and review a proposed design. The questions are English translations of the Chinese source bank, with stable IDs from **Q001 to Q700**. The first public release covered only Q201–Q300. Those IDs now identify the English versions in the Basic Design and Scenario Design collections.
 
-**版本：v1.0.0 · 语言：中文 · 数据许可：CC BY 4.0 · 工具许可：MIT**
+[Browse all questions](docs/QUESTIONS.md) · [Download JSONL](https://raw.githubusercontent.com/SII-YujunChen/microrobot-design-benchmark/v2.0.0/data/questions.jsonl) · [Download CSV](https://raw.githubusercontent.com/SII-YujunChen/microrobot-design-benchmark/v2.0.0/data/questions.csv) · [Dataset card](docs/DATASET_CARD.md)
 
-[浏览全部 100 题](docs/QUESTIONS.md) · [下载 JSONL](data/questions.jsonl) · [下载 CSV](data/questions.csv) · [数据集说明](docs/DATASET_CARD.md) · [评分说明](docs/EVALUATION.md) · [English](README.en.md)
+## Choose a collection
 
-## 数据组成
+| Collection | Original IDs | Questions | What it tests | Data |
+| --- | --- | ---: | --- | --- |
+| [Component Retrieval and Evidence](docs/questions/component_retrieval.md) | Q001–Q050 | 50 | Find candidate components and explain their supporting evidence and limitations. | [JSONL](data/component_retrieval.jsonl) |
+| [Design Reasoning and Review](docs/questions/design_reasoning.md) | Q051–Q100 | 50 | Compare design choices and judge when the available evidence is insufficient. | [JSONL](data/design_reasoning.jsonl) |
+| [Retrieval and Evidence Stress Tests](docs/questions/evidence_stress_tests.md) | Q101–Q150 | 50 | Rank relevant records, distinguish plausible but incorrect matches, and check source attribution. | [JSONL](data/evidence_stress_tests.jsonl) |
+| [Applied Scenario Reasoning](docs/questions/applied_scenarios.md) | Q151–Q200 | 50 | Use evidence to make or review a decision under the constraints of an application. | [JSONL](data/applied_scenarios.jsonl) |
+| [Basic Design](docs/questions/basic_design.md) | Q201–Q250 | 50 | Break a requirement into functions and justify which modules it needs. | [JSONL](data/basic_design.jsonl) |
+| [Scenario Design](docs/questions/scenario_design.md) | Q251–Q300 | 50 | Propose a high-level design for a given scenario and examine its feasibility. | [JSONL](data/scenario_design.jsonl) |
+| [Extended Scenario Design](docs/questions/extended_scenario_design.md) | Q301–Q700 | 400 | Review complete designs across 40 topics, with 10 questions per topic. | [JSONL](data/extended_scenario_design.jsonl) |
 
-| 子集 | 题号 | 题数 | 主要任务 |
-| --- | --- | ---: | --- |
-| Basic Design 基础设计 | Q201–Q250 | 50 | 模块职责与必要性、场景适配、设计工具适配 |
-| Scenario Design 场景设计 | Q251–Q300 | 50 | 应用场景下的整体架构、接口与可行性分析 |
+## Use the data
 
-题目面向模块级设计与方案审查。`question` 是模型应接收的原始输入；评审参考字段单独放在 `evaluation/` 中。题干与历史 Q201–Q300 评测快照逐题一致，100 个 ID 连续、唯一，100 个题干无完全重复。
+Each row in the full JSONL or CSV is one question. Use the English `question` string as the model input and save the output with its `id`. Retrieval tasks that refer to “the database” also depend on the collection of records available to the system under test. Record that collection and its version with your results.
 
-## 快速使用
+Join evaluator references by `id` after collecting responses. The first four collections provide task-specific evaluation cues. Basic Design, Scenario Design and Extended Scenario Design have separate rubrics worth 10, 10 and 20 points, respectively. Report the release version, prompt language, and results for each collection. The language change can affect comparisons with historical runs in Chinese. [Evaluation guide](docs/EVALUATION.md)
 
-```bash
+Validate a local copy with Python's standard library.
+
+```sh
 git clone https://github.com/SII-YujunChen/microrobot-design-benchmark.git
 cd microrobot-design-benchmark
 python3 scripts/validate_dataset.py
 ```
 
-```python
-import json
-from pathlib import Path
+## Citation and license
 
-questions = [json.loads(line) for line in Path("data/questions.jsonl").read_text(encoding="utf-8").splitlines()]
-for item in questions:
-    prompt = item["question"]
-    # 将 prompt 传入待评测系统，按 item["id"] 保存回答。
-```
+Cite the dataset version and the related paper when reporting results. [Citation file](CITATION.cff) · [An Evidence-Grounded Multi-Agent System for High-Level Bio-Robot Design](https://arxiv.org/abs/2608.19699v1)
 
-`data/questions.csv` 使用 UTF-8 BOM，便于表格软件读取中文。JSONL 使用 UTF-8，每行一条记录。验证脚本仅使用 Python 标准库。
-
-## 文件结构
-
-| 路径 | 内容 |
-| --- | --- |
-| `data/questions.jsonl` | 100 题完整规范数据 |
-| `data/basic_design.jsonl` | Q201–Q250 |
-| `data/scenario_design.jsonl` | Q251–Q300 |
-| `data/questions.csv` | 与主 JSONL 对应的 CSV |
-| `evaluation/reference_metadata.jsonl` | 原始预期能力、模块、评分维度等评审参考字段 |
-| `evaluation/rubrics.json` | 两组原有 10 分制评分权重 |
-| `schema/question.schema.json` | 单条题目 JSON Schema |
-| `provenance.json` | 来源文件哈希、题干核对与整理记录 |
-| `SHA256SUMS.txt` | 发布文件校验清单 |
-
-## 评测与引用
-
-按子集分别报告成绩，保留模型版本、提示词、检索条件和运行记录。两组题的原始评分维度不同，具体评分方法见[评分说明](docs/EVALUATION.md)。本仓库发布题目与评分参考；模型回答和历史结果不在本次数据发布中。
-
-相关研究：[An Evidence-Grounded Multi-Agent System for High-Level Bio-Robot Design](https://arxiv.org/abs/2608.19699v1)。使用本数据集时请引用本仓库版本和相关论文；引用格式见 [CITATION.cff](CITATION.cff)。
-
-## 许可与维护
-
-题目、评审参考与文档按 [CC BY 4.0](licenses/CC-BY-4.0.txt) 发布，`scripts/` 工具按 [MIT](licenses/MIT.txt) 发布。反馈题目问题时请附题号；修改题干的后续版本将记录新版本和新哈希。
+Version 2.0.0 was released on November 23, 2026. The questions, evaluator references and documentation use CC BY 4.0. Utility scripts use the MIT license. [Changelog](CHANGELOG.md) · [CC BY 4.0](licenses/CC-BY-4.0.txt) · [MIT](licenses/MIT.txt)

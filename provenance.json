@@ -1,15 +1,75 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "sources": [
     {
-      "filename": "queries_biorobot_design_schemes_20260603_Q201_Q250.jsonl",
-      "sha256": "f7bf78a505c4d51b0704dd24312f7e651fe7b23d1fbb99f9ba0ff52be3287ee0",
-      "record_count": 50
+      "subset": "component_retrieval",
+      "filename": "queries_20260603.jsonl",
+      "sha256": "ba0c4ae2d94ee26a17089faf310da62d99fcd0c8cc64a0d4eb4eb2334d32502d",
+      "record_count": 50,
+      "id_range": [
+        "Q001",
+        "Q050"
+      ]
     },
     {
+      "subset": "design_reasoning",
+      "filename": "queries_agent_reasoning_20260603_Q051_Q100.jsonl",
+      "sha256": "172645f5a928271802317664a3c2347c04c1eaad54effb447133eaf38c6a28a6",
+      "record_count": 50,
+      "id_range": [
+        "Q051",
+        "Q100"
+      ]
+    },
+    {
+      "subset": "evidence_stress_tests",
+      "filename": "queries_hard_eval_20260603_Q101_Q150.jsonl",
+      "sha256": "681ecc5568e7c01133bdc802ab3c674accbf0462985dba83b3ce70104bc94586",
+      "record_count": 50,
+      "id_range": [
+        "Q101",
+        "Q150"
+      ]
+    },
+    {
+      "subset": "applied_scenarios",
+      "filename": "queries_biorobot_scenarios_20260603_Q151_Q200.jsonl",
+      "sha256": "6fe5e56dafd06f173034574bf265aeec8bf306ce6f59532a88f593eaaf051bd1",
+      "record_count": 50,
+      "id_range": [
+        "Q151",
+        "Q200"
+      ]
+    },
+    {
+      "subset": "basic_design",
+      "filename": "queries_biorobot_design_schemes_20260603_Q201_Q250.jsonl",
+      "sha256": "f7bf78a505c4d51b0704dd24312f7e651fe7b23d1fbb99f9ba0ff52be3287ee0",
+      "record_count": 50,
+      "id_range": [
+        "Q201",
+        "Q250"
+      ]
+    },
+    {
+      "subset": "scenario_design",
       "filename": "queries_biorobot_scenario_design_Q251_Q300.jsonl",
       "sha256": "4bebf7402b176fda62acabf8cbeff1ce638091ea95dcc9b6f4222f73315b8c3a",
-      "record_count": 50
+      "record_count": 50,
+      "id_range": [
+        "Q251",
+        "Q300"
+      ]
+    },
+    {
+      "subset": "extended_scenario_design",
+      "filename": "queries_biorobot_scenario_design_Q301_Q700.jsonl",
+      "sha256": "94184aea5a3ff31ec09cc38bf6815940595f8466b30f44746013a68b9d76a3a5",
+      "record_count": 400,
+      "id_range": [
+        "Q301",
+        "Q700"
+      ]
     }
   ],
   "cross_check": {
@@ -17,15 +77,36 @@
     "file": "public_study_snapshot/shared/questions_only.jsonl",
     "sha256": "50dee03aba26b1540eb1990f40220a2748df3b35465325180251005d28f715bc",
     "matching_question_texts": 100,
-    "matching_question_hashes": 100
+    "matching_question_hashes": 100,
+    "id_range": [
+      "Q201",
+      "Q300"
+    ],
+    "text_language": "zh-CN"
   },
   "transformations": [
-    "Preserve source IDs and query strings exactly.",
-    "Unify record fields and export CSV/JSONL.",
-    "Keep original category in source_category; add normalized category.",
-    "Retain Q201-Q250 titles; add editorial Chinese titles for Q251-Q300.",
-    "Move all original evaluator metadata to a separate reference file.",
-    "Preserve the two original 10-point rubrics separately."
+    "Translate all 700 questions into English and retain each original question ID, technical identifier, requested deliverable, and task constraint.",
+    "Publish matching English CSV, JSONL, and browsing pages. question_sha256 identifies the released English prompt. source_prompt_sha256 and source_question_hashes.json identify the original Chinese prompt.",
+    "Group Q001–Q150 by source task type, Q151–Q200 by application scenario, Q201–Q300 by their v1.0.0 categories, and Q301–Q700 by the 40 source topics.",
+    "Use English display labels and titles. Translate existing v1.0.0 titles for Q201–Q300. For added collections use the English topic label and ID as the display title.",
+    "Keep evaluator metadata in a separate file. Translate source-language prose and retain machine identifiers, refusal flags, and the three original numeric rubrics."
   ],
-  "label_note": "The source label_type=human_scored denotes the intended evaluation format, not evidence that a particular human scoring run was completed."
+  "label_note": "The source label_type=human_scored denotes the intended evaluation format, not evidence that a particular human scoring run was completed.",
+  "extended_cross_check": {
+    "id_range": [
+      "Q301",
+      "Q700"
+    ],
+    "check": "All 400 source records match the corresponding four 100-question source files as parsed JSON objects.",
+    "source_files": [
+      "queries_biorobot_scenario_design_Q301_Q400.jsonl",
+      "queries_biorobot_scenario_design_Q401_Q500.jsonl",
+      "queries_biorobot_scenario_design_Q501_Q600.jsonl",
+      "queries_biorobot_scenario_design_Q601_Q700.jsonl"
+    ],
+    "matching_records": 400,
+    "text_language": "zh-CN"
+  },
+  "source_language": "zh-CN",
+  "release_language": "en"
 }

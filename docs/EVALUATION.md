@@ -1,50 +1,28 @@
-# 评分与运行说明
+# Evaluation guide
 
-## 固定测试输入
+## Prepare a run
 
-1. 按 `data/questions.jsonl` 读取题目，保留 Q201–Q300 ID。
-2. 将 `question` 原文输入待评测系统。全局系统提示、可用工具和检索库版本在运行开始前固定。
-3. 评审参考保存在 `evaluation/`；不要把这些字段加入待测系统输入。
-4. 每题保存 `id`、回答文本、模型版本、运行配置、时间及失败状态。检索型系统同时记录证据来源与检索配置。
-5. 对多次运行分别保留 seed/run_id，并在题目层面汇总，不把重复运行当作新增题目。
+1. Choose a collection and record the dataset version. Use `id` to join files throughout the run.
+2. Present the released English `question` string as the task input. For tasks that depend on retrieval, record the source database, index version and retrieval settings. Some questions explicitly name a desired result in the prompt, which affects how to interpret a retrieval hit.
+3. Save the response, question ID, model version, system prompt, tool settings, run ID and any failure status. Record the seed where available.
+4. Once responses are collected, join them to the evaluator records. Inspect `source_metadata` for the criteria supplied with each task. Items with `should_be_blocked: true` evaluate whether the system refuses the request. [Evaluator records](../evaluation/reference_metadata.jsonl)
 
-## 原始评分权重
+## Choose scoring criteria
 
-本次发布保留题库原有的两个 10 分制。它们是题目层面的评分参考，与论文中其他评分协议或后续 TCMES 评分体系分别记录。
+| Collection | Source criteria |
+| --- | --- |
+| Component Retrieval and Evidence (Q001–Q050) | Task type and source annotations identify the retrieval or judgment being tested. |
+| Design Reasoning and Review (Q051–Q100) | Review the expected behavior and grading focus for the individual question. |
+| Retrieval and Evidence Stress Tests (Q101–Q150) | Use the indicated metric and any supplied reference IDs, citations, hard negatives or required fields. A hard negative is a plausible but incorrect match. |
+| Applied Scenario Reasoning (Q151–Q200) | Use the scenario, evaluation focus and expected behavior to assess the decision. |
+| Basic Design (Q201–Q250) | **10 points.** Award up to 2 each for semantic decomposition, scenario fit, module selection, evidence grounding, and limitations and safety. |
+| Scenario Design (Q251–Q300) | **10 points.** Task understanding, module decomposition and scenario fit are worth 2 each. Evidence grounding and feasibility are worth 1.5 each. Safety and limitations are worth 1. |
+| Extended Scenario Design (Q301–Q700) | **20 points.** Ten equally weighted dimensions assess scenario understanding, task decomposition, module necessity, architecture coherence, host and interface compatibility, control reasoning in time and space, evidence grounding, feasibility and trade-offs, readout and evaluation, and safety and uncertainty. |
 
-### 基础设计 Q201–Q250
+The first four collections have task-specific criteria and no common point scale. For a new evaluation, define how to score each applicable criterion and how to treat missing responses before running the system. For the three scored collections, the machine-readable rubrics contain the exact source keys and weights. [Rubric definitions](../evaluation/rubrics.json)
 
-| 维度 | 字段 | 满分 |
-| --- | --- | ---: |
-| 需求语义拆解 | semantic_decomposition | 2 |
-| 场景适配 | scenario_fit | 2 |
-| 模块选择与必要性 | module_selection | 2 |
-| 证据支撑 | evidence_grounding | 2 |
-| 局限与安全边界 | limitations_and_safety | 2 |
-| 合计 | | 10 |
+## Report results
 
-### 场景设计 Q251–Q300
+Report the collection, question count, completed and failed responses, metric definition, and scoring protocol. Compute each collection's results on its own scale. Indicate which criteria were scored by people or by a model, how disagreements were resolved, and whether questions had been seen during development. For repeated runs, keep run IDs separate and use the question as the unit of resampling when estimating uncertainty across questions.
 
-| 维度 | 字段 | 满分 |
-| --- | --- | ---: |
-| 任务理解 | task_understanding | 2 |
-| 模块拆解 | module_decomposition | 2 |
-| 场景适配 | scenario_fit | 2 |
-| 证据支撑 | evidence_grounding | 1.5 |
-| 可行性评价 | feasibility_evaluation | 1.5 |
-| 安全与局限 | safety_and_limitations | 1 |
-| 合计 | | 10 |
-
-## 建议的评分记录方式
-
-以下为本次整理新增的使用建议。原题提供了维度和权重，但没有统一的逐分评分锚点；开展新的评测时，应先固定各维度的评分规则，并记录为独立协议版本。
-
-每个维度可记录得分、评分理由及回答中的证据片段。审查重点包括：是否理解当前任务；是否区分必要、可选和不需要的模块；接口与因果解释是否一致；证据是否能支撑所述结论；是否识别题设中的环境、时间尺度和使用条件。具体科学主张需核查引用，不以文字长度或模块数量代替质量。
-
-建议由多名独立评审先盲评，再记录分歧处理。报告评审人数、评审方式以及使用的规则版本；若采用模型评审，同时公开评审提示词和模型配置。
-
-## 汇总与可复现性
-
-两组题分别计算均分、各维度均分、完成数和失败数。总分为对应维度得分之和；缺失回答如何处理必须预先约定。区间估计应以题目为重采样单位，注明抽样方法与随机种子。
-
-本发布没有重跑历史系统，也没有将历史论文分数重新按这里的原始权重计算。要复现某次已发表实验，应采用那次实验的完整运行及评分配置。
+The related paper and historical evaluations used particular configurations. Record the language alongside the question IDs, retrieval conditions, protocol, and scoring scale. A run on the English translation uses a different input from a historical run on the Chinese source, even when the IDs match.

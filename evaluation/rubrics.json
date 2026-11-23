@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "rubrics": [
     {
       "id": "source-basic-10pt",
@@ -26,6 +26,24 @@
         "safety_and_limitations": 1,
         "scenario_fit": 2,
         "task_understanding": 2
+      }
+    },
+    {
+      "id": "source-extended-scenario-20pt",
+      "subset": "extended_scenario_design",
+      "source_field": "rubric_20pt",
+      "maximum_score": 20,
+      "dimensions": {
+        "architecture_coherence": 2,
+        "evidence_grounding": 2,
+        "feasibility_and_tradeoffs": 2,
+        "host_interface_compatibility": 2,
+        "module_necessity_judgment": 2,
+        "readout_and_evaluation": 2,
+        "safety_uncertainty_limitations": 2,
+        "scenario_understanding": 2,
+        "task_decomposition": 2,
+        "temporal_spatial_control_reasoning": 2
       }
     }
   ]

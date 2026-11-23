@@ -3,11 +3,22 @@
 import csv
 import hashlib
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+# Source numbering, category field, and numeric rubric for each collection.
+SUBSETS = {
+    "component_retrieval": (1, 50, "task_type", None, None),
+    "design_reasoning": (51, 100, "task_type", None, None),
+    "evidence_stress_tests": (101, 150, "task_type", None, None),
+    "applied_scenarios": (151, 200, "application_scenario", None, None),
+    "basic_design": (201, 250, "scenario", "rubric", 10),
+    "scenario_design": (251, 300, "category", "rubric_10pt", 10),
+    "extended_scenario_design": (301, 700, "category", "rubric_20pt", 20),
+}
 
 
 def require(condition, message):
@@ -20,7 +31,76 @@ def read_json(path):
 
 
 def read_jsonl(path):
-    return [json.loads(line) for line in (ROOT / path).read_text(encoding="utf-8").splitlines() if line.strip()]
+    with (ROOT / path).open(encoding="utf-8") as stream:
+        return [json.loads(line) for line in stream if line.strip()]
+
+
+def check_schema(row, schema):
+    ident = row["id"]
+    require(set(row) == set(schema["required"]), f"{ident}: unexpected or missing fields")
+    for key, spec in schema["properties"].items():
+        value = row[key]
+        required_type = {"string": str, "integer": int}[spec["type"]]
+        require(type(value) is required_type, f"{ident}: invalid type for {key}")
+        if "enum" in spec:
+            require(value in spec["enum"], f"{ident}: invalid {key}")
+        if "const" in spec:
+            require(value == spec["const"], f"{ident}: invalid {key}")
+        if "minLength" in spec:
+            require(len(value.strip()) >= spec["minLength"], f"{ident}: too short {key}")
+        if "pattern" in spec:
+            require(re.search(spec["pattern"], value), f"{ident}: invalid format for {key}")
+        if "minimum" in spec:
+            require(value >= spec["minimum"], f"{ident}: {key} below minimum")
+        if "maximum" in spec:
+            require(value <= spec["maximum"], f"{ident}: {key} above maximum")
+
+
+def check_reference(row, ref, category_key, rubric):
+    ident = row["id"]
+    meta = ref["source_metadata"]
+    require(row["source_category"] == meta[category_key], f"{ident}: source category mismatch")
+    require(row["task_type"] == meta["task_type"], f"{ident}: task type mismatch")
+    if category_key == "task_type" or row["subset"] == "extended_scenario_design":
+        require(row["category"] == row["source_category"], f"{ident}: category mismatch")
+    if rubric is None:
+        require(ref["rubric_id"] is None, f"{ident}: unexpected numeric rubric")
+    else:
+        require(ref["rubric_id"] == rubric["id"], f"{ident}: incorrect rubric ID")
+        require(meta[rubric["source_field"]] == rubric["dimensions"], f"{ident}: rubric weights mismatch")
+
+
+def check_browser(subset, rows, index_page):
+    page = f"questions/{subset}.md"
+    require(page in index_page, f"{subset}: missing from question index")
+    document = (ROOT / "docs" / page).read_text(encoding="utf-8")
+    # Compare each prompt to the text under its own heading, including its punctuation.
+    sections = re.split(r"^### (Q[0-9]{3})\b[^\n]*$", document, flags=re.MULTILINE)
+    require(sections[1::2] == [r["id"] for r in rows], f"{subset}: incorrect browser IDs")
+    for row, body in zip(rows, sections[2::2]):
+        paragraphs = body.strip("\n").split("\n\n")
+        require(row["question"] in paragraphs, f"{row['id']}: incorrect browser prompt")
+
+
+def check_checksums():
+    listed = set()
+    for line in (ROOT / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines():
+        expected, rel = line.split("  ", 1)
+        file = ROOT / rel
+        require(rel not in listed, f"Duplicate checksum entry: {rel}")
+        require(file.is_file(), f"Missing release file: {rel}")
+        data = file.read_bytes()
+        require(hashlib.sha256(data).hexdigest() == expected, f"Checksum mismatch: {rel}")
+        require(not re.search(r"[\u3400-\u9fff\uf900-\ufaff]", data.decode("utf-8-sig")),
+                f"Unexpected Chinese text in the English release: {rel}")
+        listed.add(rel)
+    actual = {
+        p.relative_to(ROOT).as_posix() for p in ROOT.rglob("*")
+        if p.is_file() and ".git" not in p.relative_to(ROOT).parts
+        and "__pycache__" not in p.parts and p.name not in {"SHA256SUMS.txt", ".DS_Store"}
+    }
+    require(listed == actual, f"Checksum manifest file set mismatch: {sorted(listed ^ actual)}")
+    return len(listed)
 
 
 def main():
@@ -28,63 +108,58 @@ def main():
     refs = read_jsonl("evaluation/reference_metadata.jsonl")
     schema = read_json("schema/question.schema.json")
     info = read_json("dataset_info.json")
-    rubrics = {r["id"]: r for r in read_json("evaluation/rubrics.json")["rubrics"]}
-    expected_ids = [f"Q{n}" for n in range(201, 301)]
-    require([r["id"] for r in rows] == expected_ids, "Expected exactly Q201–Q300 in order")
+    rubrics = read_json("evaluation/rubrics.json")["rubrics"]
+    rubric_by_subset = {r["subset"]: r for r in rubrics}
+    expected_graded = {name for name, fields in SUBSETS.items() if fields[3] is not None}
+    require(len(rubrics) == len(expected_graded) and set(rubric_by_subset) == expected_graded,
+            "Expected one numeric rubric for each of the three design subsets")
+    require(len({r["id"] for r in rubrics}) == len(rubrics), "Duplicate rubric IDs")
+
+    expected_ids = [f"Q{n:03d}" for n in range(1, 701)]
+    require([r["id"] for r in rows] == expected_ids, "Expected exactly Q001–Q700 in order")
     require([r["id"] for r in refs] == expected_ids, "Evaluator metadata IDs do not match")
-    require(len({r["question"] for r in rows}) == 100, "Duplicate question strings")
-    reference = {r["id"]: r for r in refs}
-    reconstructed = {"basic_design": [], "scenario_design": []}
-    for r in rows:
-        ident = r["id"]
-        require(set(r) == set(schema["required"]), f"{ident}: unexpected or missing fields")
-        for key, spec in schema["properties"].items():
-            require(type(r[key]) is (int if spec["type"] == "integer" else str), f"{ident}: type of {key}")
-            if "enum" in spec:
-                require(r[key] in spec["enum"], f"{ident}: invalid {key}")
-            if "const" in spec:
-                require(r[key] == spec["const"], f"{ident}: invalid {key}")
-            if "minLength" in spec:
-                require(len(r[key].strip()) >= spec["minLength"], f"{ident}: empty {key}")
-        require(r["index"] == int(ident[1:]), f"{ident}: index mismatch")
-        subset = "basic_design" if r["index"] <= 250 else "scenario_design"
-        require(r["subset"] == subset, f"{ident}: incorrect subset")
-        expected_hash = "sha256:" + hashlib.sha256(r["question"].encode("utf-8")).hexdigest()
-        require(r["question_sha256"] == expected_hash, f"{ident}: question hash mismatch")
-        ref = reference[ident]
-        rubric = rubrics[ref["rubric_id"]]
-        meta = ref["source_metadata"]
-        require(rubric["subset"] == subset, f"{ident}: rubric subset mismatch")
-        require(meta[rubric["source_field"]] == rubric["dimensions"], f"{ident}: rubric mismatch")
-        require(sum(rubric["dimensions"].values()) == 10, f"{ident}: rubric does not total 10")
-        require(r["source_category"] == meta.get("scenario", meta.get("category")), f"{ident}: original category mismatch")
-        require(r["task_type"] == meta["task_type"], f"{ident}: task type mismatch")
-        require(r["question"] in (ROOT / "docs/QUESTIONS.md").read_text(encoding="utf-8"), f"{ident}: question missing from browser document")
-        reconstructed[subset].append({"id": ident, "query": r["question"], **meta})
-    for subset in reconstructed:
-        require(read_jsonl(f"data/{subset}.jsonl") == [r for r in rows if r["subset"] == subset], f"{subset}: split mismatch")
-        require(len(reconstructed[subset]) == 50, f"{subset}: expected 50 questions")
+    require(len({r["question"] for r in rows}) == len(rows), "Duplicate question strings")
+    require(info["language"] == "en", "Dataset language must be English")
     require(info["question_count"] == len(rows), "Dataset info count mismatch")
+    require(info["id_range"] == [expected_ids[0], expected_ids[-1]], "Dataset ID range mismatch")
+    require(set(info["subsets"]) == set(SUBSETS), "Dataset subset names mismatch")
     require(info["category_counts"] == dict(Counter(r["category"] for r in rows)), "Category counts mismatch")
+
+    index_page = (ROOT / "docs/QUESTIONS.md").read_text(encoding="utf-8")
+    for subset, (first, last, category_key, rubric_field, maximum_score) in SUBSETS.items():
+        group = rows[first - 1:last]
+        details = info["subsets"][subset]
+        require(details["count"] == len(group), f"{subset}: incorrect subset count")
+        require(details["id_range"] == [group[0]["id"], group[-1]["id"]], f"{subset}: incorrect range")
+        require(group == read_jsonl(f"data/{subset}.jsonl"), f"{subset}: split differs from full dataset")
+        check_browser(subset, group, index_page)
+        rubric = rubric_by_subset.get(subset)
+        if rubric is not None:
+            require(rubric["source_field"] == rubric_field, f"{subset}: incorrect source rubric field")
+            require(rubric["maximum_score"] == sum(rubric["dimensions"].values()) == maximum_score,
+                    f"{subset}: rubric weights must total {maximum_score}")
+        for row, ref in zip(group, refs[first - 1:last]):
+            ident = row["id"]
+            check_schema(row, schema)
+            require(row["index"] == int(ident[1:]), f"{ident}: index mismatch")
+            require(row["subset"] == subset, f"{ident}: incorrect subset")
+            digest = hashlib.sha256(row["question"].encode("utf-8")).hexdigest()
+            require(row["question_sha256"] == "sha256:" + digest, f"{ident}: question hash mismatch")
+            check_reference(row, ref, category_key, rubric)
+
     with (ROOT / "data/questions.csv").open(encoding="utf-8-sig", newline="") as stream:
         csv_rows = list(csv.DictReader(stream))
-    for r in csv_rows:
-        r["index"] = int(r["index"])
+    for row in csv_rows:
+        row["index"] = int(row["index"])
     require(csv_rows == rows, "CSV and JSONL are inconsistent")
-    # Check original question hashes preserved during the verified snapshot comparison.
     source_hashes = read_json("source_question_hashes.json")
-    require(source_hashes == {r["id"]: r["question_sha256"] for r in rows}, "Original question identity changed")
-    checksums = (ROOT / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines()
-    listed = set()
-    for line in checksums:
-        expected, rel = line.split("  ", 1)
-        file = ROOT / rel
-        require(file.is_file(), f"Missing release file: {rel}")
-        require(hashlib.sha256(file.read_bytes()).hexdigest() == expected, f"Checksum mismatch: {rel}")
-        listed.add(rel)
-    actual = {p.relative_to(ROOT).as_posix() for p in ROOT.rglob("*") if p.is_file() and ".git" not in p.relative_to(ROOT).parts and "__pycache__" not in p.parts and p.name not in {"SHA256SUMS.txt", ".DS_Store"}}
-    require(listed == actual, "Checksum manifest does not match release file set")
-    print(f"PASS: 100 unique questions, 50 + 50 subsets, schema fields, original prompt hashes, rubric weights, CSV/JSONL consistency and {len(listed)} file checksums.")
+    require(source_hashes == {r["id"]: r["source_prompt_sha256"] for r in rows}, "Original prompt hashes differ")
+    for row in rows:
+        require(row["source_prompt_sha256"] != row["question_sha256"],
+                f"{row['id']}: source and English prompt hashes match")
+    file_count = check_checksums()
+    print(f"PASS: {len(rows)} unique English questions in {len(SUBSETS)} subsets, English and source prompt hashes, "
+          f"rubrics, browser pages, CSV/JSONL agreement and {file_count} file checksums.")
 
 
 if __name__ == "__main__":

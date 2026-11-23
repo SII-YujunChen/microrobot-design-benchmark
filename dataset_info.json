@@ -1,17 +1,50 @@
 {
   "name": "Microrobot Design Benchmark",
-  "version": "1.0.0",
-  "release_date": "2026-09-20",
+  "version": "2.0.0",
+  "release_date": "2026-11-23",
   "repository": "https://github.com/SII-YujunChen/microrobot-design-benchmark",
-  "language": "zh-CN",
+  "language": "en",
   "license": "CC-BY-4.0",
-  "question_count": 100,
+  "question_count": 700,
   "id_range": [
-    "Q201",
-    "Q300"
+    "Q001",
+    "Q700"
   ],
   "subsets": {
+    "component_retrieval": {
+      "name": "Component Retrieval and Evidence",
+      "id_range": [
+        "Q001",
+        "Q050"
+      ],
+      "count": 50
+    },
+    "design_reasoning": {
+      "name": "Design Reasoning and Review",
+      "id_range": [
+        "Q051",
+        "Q100"
+      ],
+      "count": 50
+    },
+    "evidence_stress_tests": {
+      "name": "Retrieval and Evidence Stress Tests",
+      "id_range": [
+        "Q101",
+        "Q150"
+      ],
+      "count": 50
+    },
+    "applied_scenarios": {
+      "name": "Applied Scenario Reasoning",
+      "id_range": [
+        "Q151",
+        "Q200"
+      ],
+      "count": 50
+    },
     "basic_design": {
+      "name": "Basic Design",
       "id_range": [
         "Q201",
         "Q250"
@@ -19,26 +52,104 @@
       "count": 50
     },
     "scenario_design": {
+      "name": "Scenario Design",
       "id_range": [
         "Q251",
         "Q300"
       ],
       "count": 50
+    },
+    "extended_scenario_design": {
+      "name": "Extended Scenario Design",
+      "id_range": [
+        "Q301",
+        "Q700"
+      ],
+      "count": 400
     }
   },
   "category_counts": {
+    "adaptive_fault_tolerant": 10,
     "agriculture_soil": 4,
-    "collective_systems": 4,
+    "autoimmune_inflammation": 10,
+    "biosafety_regulatory": 10,
+    "cardiovascular_blood": 10,
+    "cello_tool_integration": 10,
+    "closed_bioremediation": 10,
+    "collective_systems": 9,
+    "compatibility_evidence": 6,
+    "conflicting_evidence": 8,
+    "conflicting_infeasible": 10,
+    "design_logic": 6,
+    "design_review_quality": 5,
     "design_tool_interoperability": 3,
-    "environmental_monitoring": 13,
+    "education_safe_demo": 10,
+    "environmental_monitoring": 20,
+    "evidence_attribution": 8,
+    "evidence_conflict": 8,
+    "evidence_gap_proxy": 10,
+    "ex_vivo_diagnostics": 10,
+    "external_actuation": 2,
+    "external_field_biohybrid": 10,
+    "extreme_space": 10,
+    "failure_or_safety_reasoning": 2,
+    "food_safety_fermentation": 10,
+    "gold_part_hit_at_1": 6,
+    "gold_part_hit_at_3": 4,
+    "gut_living_medicines": 8,
+    "gut_microbiome_metabolism": 10,
     "gut_monitoring": 15,
-    "industrial_biomanufacturing": 13,
+    "hard_negative_ranking": 8,
+    "implants_medical_devices": 10,
+    "in_vitro_diagnostics": 7,
+    "industrial_biomanufacturing": 20,
+    "industrial_biomanufacturing_advanced": 10,
+    "infection_biofilm": 10,
     "infection_wound": 14,
-    "tissue_engineering": 8,
-    "tumor_microenvironment": 16,
-    "vascular_monitoring": 10
+    "integrated_decision": 8,
+    "liver_pancreas_metabolic": 10,
+    "low_evidence_abstention": 8,
+    "marine_aquatic": 10,
+    "multi_hop_design": 10,
+    "multi_module_design": 10,
+    "multistrain_consortia": 10,
+    "neuro_brain_gut": 10,
+    "oral_skin_mucosal": 10,
+    "organoid_organ_chip": 10,
+    "part_vs_design_card": 8,
+    "personalized_heterogeneity": 10,
+    "plant_endophyte": 10,
+    "readout_imaging_communication": 10,
+    "reproductive_maternal": 10,
+    "respiratory_lung": 10,
+    "retrieval_crispr": 6,
+    "retrieval_input_qs": 6,
+    "retrieval_memory": 8,
+    "retrieval_output": 7,
+    "safety_blocked": 3,
+    "safety_boundary_allowed": 3,
+    "safety_boundary_blocked": 3,
+    "soil_agriculture": 10,
+    "subtle_safety_boundary": 3,
+    "swarm_collective": 10,
+    "temporal_logic_memory": 10,
+    "tissue_engineering": 14,
+    "tissue_regeneration": 10,
+    "translation_validation": 10,
+    "tumor_microenvironment": 22,
+    "tumor_response_recurrence": 10,
+    "tumor_spatial_metastasis": 10,
+    "tumor_translation": 2,
+    "urinary_renal": 10,
+    "vascular_monitoring": 10,
+    "veterinary_animal_health": 10,
+    "vulnerable_populations": 10,
+    "water_wastewater": 10,
+    "wearable_ingestible_devices": 10,
+    "yeast_metabolic": 6
   },
-  "question_text_policy": "Original question strings preserved byte-for-byte in UTF-8.",
+  "question_text_policy": "English translations preserve source IDs. Each row includes independent SHA-256 digests of the English and source prompt strings.",
   "related_paper": "https://arxiv.org/abs/2608.19699v1",
-  "release_scope": "Question dataset with original evaluator metadata; no model responses or result reproduction bundle."
+  "release_scope": "English questions and evaluator references across seven collections.",
+  "source_language": "zh-CN"
 }

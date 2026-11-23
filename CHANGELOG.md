@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0 — 2026-11-23
+
+- Published 700 English questions in seven collections. This edition translates the original Chinese prompts and evaluator notes and preserves the source question IDs.
+- Added Q001–Q200 for component retrieval, evidence assessment, and scenario reasoning, and Q301–Q700 for extended scenario design across 40 topics.
+- Added collection pages and downloads, task-specific evaluator references, and the original 20-point rubric for Extended Scenario Design.
+- Changed the prompt language to `en` and the category display field to `category_label_en`. Each row carries separate checksums for the English prompt and its Chinese source.
+- Use the v1.0.0 tag for the original public Q201–Q300 release. Record the prompt language when comparing evaluation runs.
+
 ## 1.0.0 — 2026-09-20
 
 - Release the original 100 Chinese prompts Q201–Q300 in JSONL and CSV.
